@@ -105,3 +105,29 @@ def resolve(x):
             x //= div
             num += 1
         res.append((div, num))
+
+from functools import reduce
+
+_prime_divisors = None
+_record = None
+_divisors = None
+_PRIME_DIVISORS_COUNT = 0
+
+def _dfs_divisors(floor):
+    if floor == _PRIME_DIVISORS_COUNT:
+        _divisors.append(reduce(lambda a, b: a * b, _record, 1))
+        return
+    num = 1
+    for i in range(_prime_divisors[floor][1] + 1):
+        _record[floor] = num
+        num *= _prime_divisors[floor][0]
+        _dfs_divisors(floor + 1)
+
+def all_divisors(x):
+    global _prime_divisors, _record, _divisors, _PRIME_DIVISORS_COUNT
+    _prime_divisors = resolve(x)
+    _PRIME_DIVISORS_COUNT = len(_prime_divisors)
+    _record = [None] * _PRIME_DIVISORS_COUNT
+    _divisors = []
+    _dfs_divisors(0)
+    return _divisors
